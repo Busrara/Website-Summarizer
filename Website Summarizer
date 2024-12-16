@@ -1,0 +1,39 @@
+!pip install requests sumy
+
+
+import requests
+import nltk
+nltk.download('punkt_tab')
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer
+
+
+def get_website_text(url):
+ response=requests.get(url)
+ text= response.text
+ return text
+
+
+
+
+def summarize_text(text, sentence_count=5):
+ parser= PlaintextParser.from_string(text, Tokenizer("english"))
+ summarizer= LsaSummarizer()
+ summary= summarizer(parser.document, sentence_count)
+
+
+ return "".join([str(sentence) for sentence in summary])
+
+
+url= "https://www.wikipedia.org/"
+website_text= get_website_text(url)
+summary=summarize_text(website_text, sentence_count=3)
+
+
+print("---original text---")
+print(website_text[:500])
+
+
+print("---summary---")
+print(summary)
